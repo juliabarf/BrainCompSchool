@@ -22,6 +22,7 @@ Changelog
 |   `Labase <http://labase.selfip.org/>`_ - `NCE <http://portal.nce.ufrj.br>`_ - `UFRJ <https://ufrj.br/>`_.
 
 """
+import browser.ajax as ajax
 # Então, basicamente ele está transformando essa string com esses nomes em duas listas de substrings e juntando elas com o zip, e depois, transformando elas em uma tupla dos elementos dessa junção das sublistas. Aqui tem as partes do menu. Uma tupla é uma sequência imutável de valores. A função zip combina duas listas, combina o primeiro elemento da lista 1 com o primeiro elememto da lista 2. A função slip faz com que a string se transforme em uma lista de substrings.
 MENU_OPTIONS = tuple(zip("PROJETO CONHECIMENTO PESQUISA PERGUNTAS LOGIN USER RASCUNHO ESCREVER ARTIGO".split(),
                          "bars-progress book book-medical question right-to-bracket user".split()))
@@ -119,12 +120,47 @@ class PesquisaPage(SimplePage):
         super().__init__(brython, menu, hero="main_pesquisa")
 
     def build_body(self):
+
         h = self.brython.html
         img = h.IMG(src="_media/arvora_logo.png", Class="")
         log = h.IMG(src="_media/lupa.svg", style="width: 365px;")
+
         pes = h.INPUT(log, type="text", Class="input is-success is-rounded mt-5 input-icon", placeholder="Rounded in", style="width: 1000px;")
         but = h.BUTTON("Pesquisar", Class="button is-success is-rounded mt-5 is-responsive", width="68")
-        return h.DIV((img,pes,but))
+        but.bind("click", self.busca)
+        div_resultados = h.DIV(id="resultados")
+        return h.DIV((img,pes,but, div_resultados))
+
+    def busca(self, ev=None):
+        def read(req):
+            print("Dados recebidos:", req.json)
+            dados = req.json
+            if dados is None:
+                print("Erro: os dados recebidos são nulos.")
+            else:
+                div_resultados = self.brython.document["resultados"]
+                div_resultados.clear()
+                for objeto in dados:
+                    for chave, valor in objeto.items():
+                        resultado_div = self.brython.html.DIV(f'{chave}: {valor}')
+                        div_resultados <= resultado_div
+        ajax.get("busca", mode="json", oncomplete=read)
+
+
+class ReadPage(SimplePage):
+    # Inicia os atributos da classe
+    def __init__(self, brython, menu=MENU_OPTIONS):
+        super().__init__(brython, menu, hero="main_hero")
+
+    # Constroi a lading page,, essa é bem intuitiva
+    def build_body(self):
+        h = self.brython.html
+        tt1 = h.P("A R V O R A", Class="title main-text has-text-weight-bold")
+        tt2 = h.P("Brain Computational School", Class="title is-1 main-text")
+        # phr = phrase
+        phr = h.P("Seu lugar de pesquisas de neurociência!", Class='main-text title is-3')
+        # retorna uma div com todos os elementos da página
+        return h.DIV((tt1, tt2, phr))
 
 class CadastroPage(SimplePage):
     def __init__(self, brython, menu=MENU_OPTIONS):
@@ -526,6 +562,7 @@ class Arvora:
         SimplePage.PAGES["_PROJETO_"] = ProjectPage(br)
         SimplePage.PAGES["_CONHECIMENTO_"] = KnowledgePage(br)
         SimplePage.PAGES["_ARTIGO_"] = Article(br)
+        SimplePage.PAGES["_READ_"] = ReadPage(br)
         # SimplePage.PAGES['_PERGUNTAS_'] = QuestionsPage(br)
         SimplePage.PAGES["_RASCUNHO_"] = DraftPage(br)
         SimplePage.PAGES["_ESCREVER_"] = WritingPage(br)
