@@ -23,6 +23,8 @@ no [NCE](http://nce.ufrj.br) - [UFRJ](https://ufrj.br).
 
 - **Carla Verônica M. Marques** - [Página Pessoal](https://activufrj.nce.ufrj.br/wiki/abrapacarla/home)
 - **Carlo E. T. Oliveira** - [Página Pessoal](http://carlo.activufrj.nce.ufrj.br)
+- **Júlia Barbosa de Farias** - [Página Pessoal](http://lattes.cnpq.br/6859045370973806)
+
 
 ## Licença
 
